@@ -45,9 +45,7 @@ exports.createScream = (req, res) => {
     .then((doc) => {
       let resScream = newScream;
       resScream.screamId = doc.id;
-      return res.json({
-        message: `document ${doc.id} created successfully`,
-      });
+      return res.json(resScream);
     })
     .catch((err) => {
       console.error(err);

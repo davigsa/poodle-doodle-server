@@ -1,5 +1,6 @@
 const { firestore, https } = require('firebase-functions');
 const express = require('express');
+const cors = require('cors');
 
 const { admin } = require('./utils/admin');
 
@@ -11,6 +12,7 @@ const {
   getAuthenticatedUser,
   getUserDetails,
   markNotificationsRead,
+  getUserById,
 } = require('./controllers/user');
 const {
   getAllScreams,
@@ -42,7 +44,9 @@ app.post('/user', fbAuth, addUserDetails);
 app.get('/user', fbAuth, getAuthenticatedUser);
 app.get('/user/:handle', getUserDetails);
 app.post('/notifications', fbAuth, markNotificationsRead);
+app.get('/users/:userId', getUserById);
 
+app.use(cors());
 exports.api = https.onRequest(app);
 
 exports.createNotificationOnLike = firestore

@@ -13,7 +13,7 @@ firebase.initializeApp(config);
 exports.signUp = (req, res) => {
   let userToken, userId;
   const newUser = {
-    email: email,
+    email: req.body.email,
     password: req.body.password,
     confirmPassword: req.body.confirmPassword,
     handle: req.body.handle,
@@ -74,9 +74,7 @@ exports.signUp = (req, res) => {
         .set(userCredentials);
     })
     .then(() => {
-      return res.status(201).json({
-        token: `user has been created with token: ${userToken}`,
-      });
+      return res.status(201).json(userToken);
     })
     .catch((err) => {
       console.error(err);
@@ -301,6 +299,26 @@ exports.markNotificationsRead = (req, res) => {
     .commit()
     .then(() => {
       return res.json({ message: 'notification mark as read' });
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(500).json({ error: err.code });
+    });
+};
+
+exports.getUserById = (req, res) => {
+  let user = {};
+  admin
+    .firestore()
+    .collection('users')
+    .where('userId', '==', req.params.userId)
+    .limit(1)
+    .get()
+    .then((data) => {
+      data.forEach((doc) => {
+        user = doc.data();
+      });
+      return res.json(user);
     })
     .catch((err) => {
       console.error(err);
